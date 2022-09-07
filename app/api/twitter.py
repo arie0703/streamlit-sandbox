@@ -37,7 +37,6 @@ fmt = "%Y-%m-%dT00:00:00Z"
 today = get_today_datetime(fmt)
 yesterday = get_yesterday_datetime(fmt)
 
-print(today, yesterday)
 tweets = client.get_users_tweets(id = user.data.id, 
                                 max_results = count,
                                 exclude=("replies"),
@@ -46,14 +45,24 @@ tweets = client.get_users_tweets(id = user.data.id,
                                 )
 tweets_data = tweets.data
 
+# pandasで処理する用の配列を用意
+
+score_list = []
+tweet_list = []
+label_list = []
 if tweets_data != None:
     for tweet in tweets_data:
-        print(tweet.text)
         em = nlp(tweet.text)
-        print(em)
-        obj = {}
-        obj["tweet_id"] = tweet.id
-        obj["text"] = tweet.text
-        results.append(obj)
-else:
-    results.append('')
+        score_list.append(em[0]["score"])
+        label_list.append(em[0]["label"])
+        tweet_list.append(tweet.text)
+
+
+def get_tweet_data():
+    data = {
+        'Tweet': tweet_list,
+        'Score': score_list,
+        'Label': label_list
+    }
+    return data
+

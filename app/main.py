@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from date import get_fourweeks
 from api.qiita import get_qiita
+from api.twitter import get_tweet_data
 
 st.title("Dash Board")
 
@@ -33,3 +34,17 @@ bar_data = pd.DataFrame(
 )
 
 st.bar_chart(bar_data)
+
+@st.cache
+def twitter_analysis():
+    data = get_tweet_data()
+    return data
+
+
+st.text("ツイート分析")
+
+data = twitter_analysis()
+avg = sum(data["Score"]) / len(data["Score"])
+st.dataframe(pd.DataFrame(data), width=1000)
+st.subheader('平均スコア')
+st.metric(label='平均', value=avg)
